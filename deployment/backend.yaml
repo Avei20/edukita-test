@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edukita-backend
+  namespace: edukita
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: edukita-backend
+  template:
+    metadata:
+      labels:
+        app: edukita-backend
+    spec:
+      containers:
+        - name: backend
+          image: edukita-backend:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: JWT_SECRET
+              value: supersecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: edukita-backend
+  namespace: edukita
+spec:
+  selector:
+    app: edukita-backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP

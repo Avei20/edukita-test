@@ -161,7 +161,7 @@ curl -X POST http://localhost:8080/assignment  -H "Authorization: Bearer eyouou.
   "message": "Success",
   "data": {
     "id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
-    "subject": "Math",
+    "subject": "MATH",
     "title": "Assignment 1",
     "content": "This is the content",
     "student_id": "f47ac10b-58cc-0372-8567-0e02b2c3d479"
@@ -184,7 +184,7 @@ curl -X GET http://localhost:8080/assignment  -H "Authorization: Bearer eyouou..
   "data": [
     {
       "id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
-      "subject": "Math",
+      "subject": "MATH",
       "title": "Assignment 1",
       "content": "This is the content",
       "student_id": "f47ac10b-58cc-0372-8567-0e02b2c3d479"

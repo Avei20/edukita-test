@@ -17,6 +17,7 @@ This is fullstack project using Go and Next.JS framework. The backend is written
 - [Frontend](frontend/README.md)
 
 ## Development
+Since, There is problem when reading env on frontend using docker-compose if the frontend run using `bun run start`. I suggest to test using development environment if want to test GenAI Integration.
 1. Copy the env.template to .env
 2. Run all the services using this command
 ```bash

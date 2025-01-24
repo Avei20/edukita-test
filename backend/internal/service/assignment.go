@@ -51,7 +51,7 @@ func (s *assignmentImpl) GetAllAssignmentsByTeacher(
 		return nil, err
 	}
 
-	if filterBy != nil {
+	if filterBy != nil && *filterBy != "" {
 		assignments, err = s.repo.FindAllAssignmentBySubject(*filterBy)
 		if err != nil {
 			return nil, err

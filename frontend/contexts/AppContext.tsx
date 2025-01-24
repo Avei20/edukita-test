@@ -10,7 +10,7 @@ import type {
 import { useToast } from "@/hooks/use-toast";
 
 const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
 interface AppContextType {
   currentUser: User | null;
@@ -19,20 +19,24 @@ interface AppContextType {
   token: string;
   setToken: (token: string) => void;
 
-  login: (email: string) => Promise<User>;
-  register: (email: string, name: string, role: string) => Promise<User>;
+  login: (email: string) => Promise<{ user: User; token: string }>;
+  register: (
+    email: string,
+    name: string,
+    role: string,
+  ) => Promise<{ user: User; token: string } | null>;
 
   submitAssignment: (
     title: string,
     subject: string,
     content: string,
-  ) => Promise<Assignment>;
-  getAssignments: () => Promise<Assignment[]>;
+  ) => Promise<Assignment | null>;
+  getAssignments: (filterBy?: string) => Promise<Assignment[]>;
   submitGrade: (
     assignment_id: string,
     grade: number,
     feedback: string,
-  ) => Promise<Grade>;
+  ) => Promise<Grade | null>;
   getGrades: (student_id: string) => Promise<Grade[]>;
 }
 
@@ -53,7 +57,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
-  const login = async (email: string): Promise<User | null> => {
+  const login = async (email: string): Promise<UserResponse> => {
     const response = await fetch(`${BACKEND_URL}/login?email=${email}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -63,19 +67,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
 
     if (response.status !== 200) {
       throw new Error(result.message || `Error: ${response.status}`);
-      return null;
     }
 
     setToken(result.data.token);
     setCurrentUser(result.data.user);
-    return result.data;
+    return { user: result.data.user, token: result.data.token };
   };
 
   const register = async (
     email: string,
     name: string,
     role: string,
-  ): Promise<User | null> => {
+  ): Promise<UserResponse | null> => {
     const response = await fetch(`${BACKEND_URL}/users`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -91,7 +94,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
 
     setToken(result.data.token);
     setCurrentUser(result.data.user);
-    return result.data;
+    return { user: result.data.user, token: result.data.token };
   };
 
   const submitAssignment = async (
@@ -122,8 +125,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     return result.data;
   };
 
-  const getAssignments = async (): Promise<Assignment[]> => {
-    const response = await fetch(`${BACKEND_URL}/assignment`, {
+  const getAssignments = async (filterBy?: string): Promise<Assignment[]> => {
+    let url = `${BACKEND_URL}/assignment`;
+
+    if (filterBy && filterBy !== "") {
+      url = `${BACKEND_URL}/assignment?filterby=${filterBy}`;
+    }
+
+    const response = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const result: ApiResponse<Assignment[]> = await response.json();
@@ -191,6 +200,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       value={{
         currentUser,
         setCurrentUser,
+        token,
+        setToken,
         login,
         register,
         submitAssignment,

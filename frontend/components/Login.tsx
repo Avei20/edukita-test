@@ -25,7 +25,8 @@ export default function Login({ onLogin }: LoginProps) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "An error occurred",
+        description:
+          error instanceof Error ? error.message : "An error occurred",
       });
       onLogin(false);
     } finally {

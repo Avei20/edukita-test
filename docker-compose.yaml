@@ -22,7 +22,7 @@ services:
     restart: always
     environment:
       - NEXT_PUBLIC_BACKEND_URL=http://localhost:8080
-      - NEXT_PUBLIC_GEMINI_API_KEY=AIzaSyAve8x61bOQZaNCsw8z21BgtpoLE4-EC_0
+      - NEXT_PUBLIC_GEMINI_API_KEY=
     ports:
       - 3000:3000
     develop:

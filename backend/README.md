@@ -6,8 +6,8 @@ Libraries used:
 - [JWT Library](https://pkg.go.dev/github.com/golang-jwt/jwt/v5)
 
 ## To Dos
-- [] Merge users object on GET /assignment
-- [] Fix when build file to binary. Assignment filter didn't works.
+- [ ] Merge users object on GET /assignment
+- [ ] Fix when build file to binary. Assignment filter didn't works.
 
 ## Requirements
 - [Go 1.22 or Latest](https://golang.org/dl/)

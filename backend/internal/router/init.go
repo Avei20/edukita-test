@@ -18,12 +18,9 @@ func InitRouter(h handler.Handlers) http.Handler {
 	mux.HandleFunc("POST /grade", h.CreateGrade)
 	mux.HandleFunc("GET /grade/{studentid}", h.GetGrade)
 
-	// mux.Handle("/users/", InitUserRoute(h))
-	// mux.Handle("/assignments/", InitAssignmentRoute(h))
-	// mux.Handle("/grades/", InitGradeRoute(h))
-	muxMiddleware := middleware.RoleValidator(mux)
-	muxCors := middleware.CORS(muxMiddleware)
+	muxCors := middleware.CORS(mux)
 	muxJwt := middleware.JwtValidator(muxCors)
+	muxMiddleware := middleware.RoleValidator(muxJwt)
 
-	return muxJwt
+	return muxMiddleware
 }

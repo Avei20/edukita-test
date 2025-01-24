@@ -4,6 +4,7 @@ import (
 	"backend/internal/service"
 	"backend/pkg/response"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 )
@@ -24,6 +25,11 @@ func (h *handlerImpl) CreateAssignment(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		response.ReturnInternalServerError(w, err)
+		return
+	}
+
+	if body.Subject != "MATH" && body.Subject != "ENGLISH" {
+		response.SetError(w, http.StatusBadGateway, fmt.Errorf("Subject undefined"))
 		return
 	}
 

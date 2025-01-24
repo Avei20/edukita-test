@@ -70,6 +70,20 @@ Every endpoint will be return on this structured format:
 }
 ```
 `data` will be adjusted based on returned value needed to pass to the frontend.
+
+### Authorization
+Every request to the backend need to pass the token on the header. Only /users and /login is bypass the token requirements.
+
+```typescript
+await fetch("http://localhost:8080/users", {
+  method: "GET",
+  headers: {
+    "Authorization": `Bearer ${token}`
+  },
+)
+
+```
+
 ### POST /login
 Used to logged in the user. Only required to pass email because there is no requirement for storing password in secure way.
 
@@ -97,13 +111,138 @@ curl -X POST http://localhost:8080/login?email=test@gmail.com
   }
 }
 ```
+### POST /users
+Used to create new user.
+
+### Body Parameter
+- email: string
+- name: string
+- role: "STUDENT" | "TEACHER"
+
+```bash
+curl -X POST http://localhost:8080/users  -d '{"email": "test@gmail.com", "name": "test", "role": "STUDENT"}'
+```
 
 #### Response Object
-### POST /users
+```json
+{
+  "status": "success",
+  "status_code": 200,
+  "message": "Success",
+  "data": {
+    "token": "",
+    "user": {
+      "id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
+      "username": "test",
+      "email": "test@gmail.com",
+      "role": "STUDENT"
+    }
+  }
+}
+```
+
 ### POST /assignment
+Used to create new assignment. Only user with STUDENT role is allowed to use this endpoint.
+
+### Body Parameter
+- subject: "MATH" | "ENGLISH"
+- title: string
+- content: string
+
+```bash
+curl -X POST http://localhost:8080/assignment  -H "Authorization: Bearer eyouou..." -d '{"subject": "Math", "title": "Assignment 1", "content": "This is the content"}'
+```
+
+#### Response Object
+```json
+{
+  "status": "success",
+  "status_code": 200,
+  "message": "Success",
+  "data": {
+    "id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
+    "subject": "Math",
+    "title": "Assignment 1",
+    "content": "This is the content",
+    "student_id": "f47ac10b-58cc-0372-8567-0e02b2c3d479"
+  }
+}
+```
 ### GET /assignment
+Used to get all assignment. Only user with TEACHER role is allowed to use this endpoint.
+
+```bash
+curl -X GET http://localhost:8080/assignment  -H "Authorization: Bearer eyouou..."
+```
+
+#### Response Object
+```json
+{
+  "status": "success",
+  "status_code": 200,
+  "message": "Success",
+  "data": [
+    {
+      "id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
+      "subject": "Math",
+      "title": "Assignment 1",
+      "content": "This is the content",
+      "student_id": "f47ac10b-58cc-0372-8567-0e02b2c3d479"
+    }
+  ]
+}
+```
+
+
 ### POST /grade
+Used to create new grade. Only user with TEACHER role is allowed to use this endpoint.
+
+### Body Parameter
+- assignment_id: string
+- grade: int
+- feedback: string
+
+```bash
+curl -X POST http://localhost:8080/grade  -H "Authorization: Bearer eyouou..." -d '{"assignment_id": "f47ac10b-58cc-0372-8567-0e02b2c3d479", "grade": 100, "feedback": "Good Job"}'
+```
+
+#### Response Object
+```json
+{
+  "status": "success",
+  "status_code": 200,
+  "message": "Success",
+  "data": {
+    "id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
+    "assignment_id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
+    "teacher_id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
+    "grade": 100,
+    "feedback": "Good Job"
+  }
+}
+```
+
 ### GET /grade/{student_id}
+Used to get all grade of the student. Only user with STUDENT role is allowed to use this endpoint.
 
+```bash
+curl -X GET http://localhost:8080/grade/f47ac10b-58cc-0372-8567-0e02b2c3d479  -H "Authorization: Bearer eyouou..."
+```
 
-- POST /user
+#### Response Object
+```json
+{
+  "status": "success",
+  "status_code": 200,
+  "message": "Success",
+  "data": [
+    {
+      "id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
+      "assignment_id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
+      "teacher_id": "f47ac10b-58cc-0372-8567-0e02b2c3d479",
+      "grade": 100,
+      "feedback": "Good Job"
+    }
+  ]
+}
+```

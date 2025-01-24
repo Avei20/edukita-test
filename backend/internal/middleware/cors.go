@@ -9,6 +9,7 @@ import (
 func CORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			log.Println("CORS")
 			if r.Method == "OPTIONS" {
 				log.Println("Preflight request")
 				response.SetRawResponse(w, http.StatusOK, nil)

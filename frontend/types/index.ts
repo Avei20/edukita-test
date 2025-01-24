@@ -1,6 +1,6 @@
 export type Role = "TEACHER" | "STUDENT";
 
-export type Subject = "English" | "Math";
+export type Subject = "ENGLISH" | "MATH";
 
 export interface User {
   id: string;

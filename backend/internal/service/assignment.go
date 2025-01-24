@@ -24,6 +24,7 @@ func (s *assignmentImpl) CreateAssignment(
 		ID:      uuid.New().String(),
 		Title:   data.Title,
 		Content: data.Content,
+		Subject: data.Subject,
 		// UserID from Context.
 		StudentId: userId,
 	})

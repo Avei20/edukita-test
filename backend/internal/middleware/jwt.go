@@ -16,17 +16,10 @@ import (
 
 func JwtValidator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		publicPath := []string{
-			"/login",
-			"/users",
-		}
-
-		for _, path := range publicPath {
-			if r.URL.Path == path {
-				next.ServeHTTP(w, r)
-				return
-			}
+		log.Println("JWTValidator")
+		if strings.Contains(r.URL.Path, "login") || strings.Contains(r.URL.Path, "users") {
+			next.ServeHTTP(w, r)
+			return
 		}
 
 		authorizationHeader := r.Header.Get("Authorization")
@@ -66,15 +59,47 @@ func JwtValidator(next http.Handler) http.Handler {
 			return
 		}
 
-		// Save UserId and Role to context from clams
+		log.Println(claims)
+		log.Println(claims)
 
-		userId := claims["sub"].(string)
-		role := claims["role"].(string)
+		userMap, ok := claims["User"].(map[string]interface{})
+		if !ok {
+			response.SetError(w, http.StatusUnauthorized, fmt.Errorf("invalid token: missing user data"))
+			return
+		}
 
-		log.Println(role)
+		log.Println(userMap)
 
-		ctx := context.WithValue(r.Context(), contextkeys.UserId, userId)
-		ctx = context.WithValue(ctx, contextkeys.Role, role)
+		// Check if required claims exist
+		userId, ok := userMap["id"]
+		if !ok || userId == nil {
+			response.SetError(w, http.StatusUnauthorized, fmt.Errorf("invalid token: missing user id"))
+			return
+		}
+
+		role, ok := userMap["role"]
+		if !ok || role == nil {
+			response.SetError(w, http.StatusUnauthorized, fmt.Errorf("invalid token: missing role"))
+			return
+		}
+
+		// Convert claims to string
+		userIdStr, ok := userId.(string)
+		if !ok {
+			response.SetError(w, http.StatusUnauthorized, fmt.Errorf("invalid token: invalid user id format"))
+			return
+		}
+
+		roleStr, ok := role.(string)
+		if !ok {
+			response.SetError(w, http.StatusUnauthorized, fmt.Errorf("invalid token: invalid role format"))
+			return
+		}
+
+		log.Printf("User ID: %s, Role: %s", userIdStr, roleStr)
+
+		ctx := context.WithValue(r.Context(), contextkeys.UserId, userIdStr)
+		ctx = context.WithValue(ctx, contextkeys.Role, roleStr)
 		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)

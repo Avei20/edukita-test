@@ -20,7 +20,7 @@ interface RegistrationProps {
 export default function Registration({ onRegister }: RegistrationProps) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [role, setRole] = useState<Role>("student");
+  const [role, setRole] = useState<Role>("STUDENT");
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useApp();
 

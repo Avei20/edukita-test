@@ -1,0 +1,31 @@
+services:
+  backend:
+    container_name: edukita-backend
+    build:
+      context: ./backend
+      dockerfile: ${DOCKERFILE:-Dockerfile}
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      JWT_SECRET: supersecret
+    develop:
+      watch:
+        - path: ./backend
+          action: sync+restart
+          target: /app
+  frontend:
+    container_name: edukita-frontend
+    build:
+      context: ./frontend
+      dockerfile: ${DOCKERFILE:-Dockerfile}
+    restart: always
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL=http://localhost:8080
+    ports:
+      - 3000:3000
+    develop:
+      watch:
+        - path: ./frontend
+          target: /app
+          action: sync+restart

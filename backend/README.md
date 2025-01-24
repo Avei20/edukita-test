@@ -8,6 +8,7 @@ Libraries used:
 ## To Dos
 - [ ] Merge users object on GET /assignment
 - [ ] Fix when build file to binary. Assignment filter didn't works.
+- [ ] Feature: add variable to mark if the assignment is Graded. Then, return the label to frontend for clean view. 
 
 ## Requirements
 - [Go 1.22 or Latest](https://golang.org/dl/)
